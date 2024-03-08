@@ -12,7 +12,7 @@ The user will need to install Ollama and download a model.
 
 This application was developed in a Windows 10 env, using conda.
 
-Details on download & installing Ollama, as well as downloading your first model:
+Details on downloading & installing Ollama, as well as downloading your first model:
 
 - [Ollama Windows Preview](https://ollama.com/blog/windows-preview)
 
