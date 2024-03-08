@@ -5,12 +5,17 @@ from tkinter import messagebox
 import requests
 import customtkinter as ck
 from customtkinter import CTk, CTkButton
-from model_path import OLLAMA_EXE_PATH, LLAMA2_MODEL
+from model_path import *
+# from multiprocessing import Process, Value
+from threading import Thread
+
+MODEL = CODING_LLAMA
 
 
 class App(CTk):
     def __init__(self):
         super().__init__()
+        self.loading = False
         self.title("Llama Chat")
         self.protocol("WM_DELETE_WINDOW", self.on_exit)
         self.configure(bg="#000000")
@@ -18,6 +23,7 @@ class App(CTk):
         self.window_height = 600
         self.geometry(f"{self.window_width}x{self.window_height}")
         self.minsize(width=self.window_width, height=self.window_height)
+        self.send_message_process = None
 
         self.font = ck.CTkFont(family="Roboto", size=13, weight="bold")
 
@@ -26,7 +32,7 @@ class App(CTk):
         self.grid_rowconfigure(1, weight=1)
         self.grid_columnconfigure(0, weight=1)
 
-        start_command = f"{OLLAMA_EXE_PATH} run {LLAMA2_MODEL}"
+        start_command = f"{OLLAMA_EXE_PATH} run {MODEL}"
         self.ollama_process = subprocess.Popen(start_command, shell=True)
 
         # Create a scrolled text widget for the chat history
@@ -66,21 +72,25 @@ class App(CTk):
         self.initialize_chat()
 
     def on_enter(self, e):
-        self.send_button.configure(fg_color="silver")
-        self.send_button.configure(text_color="#141414")
+        if not self.loading:
+            self.send_button.configure(fg_color="silver", text_color="#141414", cursor="hand2")
 
     def on_leave(self, e):
-        self.send_button.configure(fg_color="#141414")
-        self.send_button.configure(text_color="silver")
+        if not self.loading:
+            self.send_button.configure(fg_color="#141414", text_color="silver")
 
     def button_press(self, e):
-        self.send_button.configure(text="Loading", fg_color="#ffffff", text_color="#141414")
-        self.update()
-        self.send_message()
+        if not self.loading:
+            self.send_button.configure(text="Loading", fg_color="#ffffff", text_color="#141414", state='disabled')
+            self.loading = True
+            self.update()
+            self.send_message_process = Thread(target=self.send_message, daemon=True)
+            self.send_message_process.start()
 
     def button_release(self, e):
-        self.send_button.configure(fg_color="#141414", text="Send")
-        self.update()
+        # self.send_button.configure(fg_color="#141414", text_color='silver', text="Send")
+        # self.update()
+        pass
 
     def insert_newline(self, event=None):
         self.user_input.insert(ck.INSERT, "\n")
@@ -89,7 +99,7 @@ class App(CTk):
     def get_model_response(self, message):
         api_url = "http://localhost:11434/api/generate"
         data = {
-            "model": "llama2:13b",
+            "model": MODEL,
             "prompt": message
         }
         headers = {"Content-Type": "application/json"}
@@ -128,22 +138,26 @@ class App(CTk):
 
         model_response = self.get_model_response(user_message)
         self.chat_history.configure(state="normal")
-        self.chat_history.insert(tk.END, "\nLlama:" + model_response + "\n\n")
+        if MODEL == CODING_LLAMA:
+            self.chat_history.insert(tk.END, "\nLlama:\n" + model_response + "\n\n")
+        else:
+            self.chat_history.insert(tk.END, "\nLlama:" + model_response + "\n\n")
         self.chat_history.configure(state="disabled")
         self.chat_history.see(tk.END)
 
         self.user_input.delete("1.0", "end-1c")
 
-        self.send_button.configure(fg_color="#141414", text_color="silver", text="Send")
+        self.send_button.configure(fg_color="#141414", text_color="silver", text="Send", state='normal')
+        self.loading = False
 
         return "break"
 
     def initialize_chat(self):
         self.user_input.insert(
             tk.END,
-            "A new chat has started (do not respond to this). "
-            "Provide a general greeting to the user and ask "
-            "them what they would like to talk about or need assistance with."
+            'SYSTEM"""' +
+            'Provide a general greeting to the user and ask ' +
+            'them what they would like to talk about or need assistance with."""'
         )
         user_message = self.user_input.get("1.0", "end-1c")  # Get text from Text widget
         if not user_message.strip():
@@ -163,6 +177,9 @@ class App(CTk):
     def on_exit(self):
         # Ask user for confirmation before exiting
         if messagebox.askokcancel("Quit", "Do you want to quit?"):
+            if self.send_message_process is not None:
+                self.send_message_process.join()
             # Terminate the Ollama subprocess before exiting
             self.ollama_process.terminate()
+            self.ollama_process.wait(timeout=10)
             self.destroy()
