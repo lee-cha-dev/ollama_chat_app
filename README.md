@@ -19,7 +19,7 @@ Details on downloading & installing Ollama, as well as downloading your first mo
 A `model_path.py` file will need to be created:
   * Add two variables in this file:
   * OLLAMA_EXE_PATH = '/path/to/the/ollama.exe'
-  * LLAMA2_MODEL = "llama2:13b" 
+  * LLAMA2_MODEL = 'llama2:13b'
     * This needs to be the name of the model downloaded & wanted to run
 
 The application will run http://localhost:11434 to host the LLM and use http://localhost:11434/api/generate to generate 
