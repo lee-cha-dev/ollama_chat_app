@@ -8,7 +8,13 @@ when the button is clicked by `"button-1"`
 ### In lue of a completed ReadMe:
 The application is a chat interface for Ollama LLMs that have been installed and ran locally.
 
-The user just need to install Ollama and download a model.
+The user will need to install Ollama and download a model.
+
+This application was developed in a Windows 10 env, using conda.
+
+Details on download & installing Ollama, as well as downloading your first model:
+
+- [Ollama Windows Preview](https://ollama.com/blog/windows-preview)
 
 The will need to create a `model_path.py` file
 * Add two variables in this file:
