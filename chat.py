@@ -47,7 +47,7 @@ class App(CTk):
             self.input_frame, fg_color="#141414", text_color="silver", font=self.font
         )
         self.user_input.pack(side="left", padx=10, pady=10, fill="both", expand=True)
-        self.user_input.bind("<Return>", self.send_message)
+        self.user_input.bind("<Return>", self.button_press)
         self.user_input.bind("<Shift-Return>", self.insert_newline)
 
         # Create the send button
@@ -74,7 +74,7 @@ class App(CTk):
         self.send_button.configure(text_color="silver")
 
     def button_press(self, e):
-        self.send_button.configure(text="Loading", fg_color="#ffffff")
+        self.send_button.configure(text="Loading", fg_color="#ffffff", text_color="#141414")
         self.update()
         self.send_message()
 
@@ -134,7 +134,7 @@ class App(CTk):
 
         self.user_input.delete("1.0", "end-1c")
 
-        self.send_button.configure(fg_color="#141414", text="Send")
+        self.send_button.configure(fg_color="#141414", text_color="silver", text="Send")
 
         return "break"
 
