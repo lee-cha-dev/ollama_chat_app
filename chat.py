@@ -128,7 +128,8 @@ class App(CTk):
     def send_message(self, event=None):
         user_message = self.user_input.get("1.0", "end-1c")  # Get text from Text widget
         if not user_message.strip():
-            self.send_button.configure(fg_color="#141414", text="Send")
+            self.send_button.configure(fg_color="#141414", text_color="silver", text="Send", state='normal')
+            self.loading = False
             return "break"
 
         self.chat_history.configure(state="normal")
