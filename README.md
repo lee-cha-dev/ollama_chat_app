@@ -16,8 +16,8 @@ Details on downloading & installing Ollama, as well as downloading your first mo
 
 - [Ollama Windows Preview](https://ollama.com/blog/windows-preview)
 
-The will need to create a `model_path.py` file
-* Add two variables in this file:
+A `model_path.py` file will need to be created:
+  * Add two variables in this file:
   * OLLAMA_EXE_PATH = '/path/to/the/ollama.exe'
   * LLAMA2_MODEL = "llama2:13b" 
     * This needs to be the name of the model downloaded & wanted to run
