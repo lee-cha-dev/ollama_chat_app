@@ -9,7 +9,7 @@ from model_path import *
 # from multiprocessing import Process, Value
 from threading import Thread
 
-MODEL = CODING_LLAMA
+MODEL = LLAMA3_MODEL
 
 
 class App(CTk):
@@ -140,9 +140,9 @@ class App(CTk):
         model_response = self.get_model_response(user_message)
         self.chat_history.configure(state="normal")
         if MODEL == CODING_LLAMA:
-            self.chat_history.insert(tk.END, "\nLlama:\n" + model_response + "\n\n")
+            self.chat_history.insert(tk.END, "Llama:\n" + model_response + "\n\n")
         else:
-            self.chat_history.insert(tk.END, "\nLlama:" + model_response + "\n\n")
+            self.chat_history.insert(tk.END, "Llama:\n" + model_response + "\n\n")
         self.chat_history.configure(state="disabled")
         self.chat_history.see(tk.END)
 
@@ -158,7 +158,7 @@ class App(CTk):
             tk.END,
             'SYSTEM"""' +
             'Provide a general greeting to the user and ask ' +
-            'them what they would like to talk about or need assistance with."""'
+            'them what they would like to talk about or need assistance with. Do not tell them your name is system."""'
         )
         user_message = self.user_input.get("1.0", "end-1c")  # Get text from Text widget
         if not user_message.strip():
@@ -169,7 +169,7 @@ class App(CTk):
 
         model_response = self.get_model_response(user_message)
         self.chat_history.configure(state="normal")
-        self.chat_history.insert(tk.END, "Llama:" + model_response + "\n\n")
+        self.chat_history.insert(tk.END, "Llama:\n" + model_response + "\n\n")
         self.chat_history.configure(state="disabled")
         self.chat_history.see(tk.END)
 
